@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
 const vertexShader = `
@@ -95,6 +95,67 @@ function EvidenceObject() {
 }
 
 export function EvidenceCanvas() {
+  const [profile, setProfile] = useState<"checking" | "full" | "fallback">(
+    "checking",
+  );
+  const [contextLost, setContextLost] = useState(false);
+  const canvasElement = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const nav = navigator as Navigator & { deviceMemory?: number };
+    const constrained =
+      (nav.deviceMemory ?? 8) <= 4 || navigator.hardwareConcurrency <= 4;
+    const nextProfile = reduced || constrained ? "fallback" : "full";
+    const frame = window.requestAnimationFrame(() => {
+      setProfile(nextProfile);
+      if (nextProfile === "fallback")
+        window.dispatchEvent(new CustomEvent("verity:webgl-ready"));
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasElement.current;
+    if (!canvas) return;
+    const lost = (event: Event) => {
+      event.preventDefault();
+      setContextLost(true);
+    };
+    const restored = () => setContextLost(false);
+    canvas.addEventListener("webglcontextlost", lost);
+    canvas.addEventListener("webglcontextrestored", restored);
+    return () => {
+      canvas.removeEventListener("webglcontextlost", lost);
+      canvas.removeEventListener("webglcontextrestored", restored);
+    };
+  }, [profile]);
+
+  if (profile === "checking")
+    return (
+      <div className="canvas-fallback">
+        <ScanFallbackLabel label="Checking graphics profile" />
+      </div>
+    );
+  if (profile === "fallback" || contextLost)
+    return (
+      <div className="canvas-fallback canvas-fallback--visual">
+        <div className="fallback-evidence">
+          <span />
+          <i />
+        </div>
+        <ScanFallbackLabel
+          label={
+            contextLost
+              ? "Graphics context recovering"
+              : "Optimized evidence preview"
+          }
+        />
+      </div>
+    );
+
   return (
     <div className="evidence-canvas" aria-hidden="true">
       <Canvas
@@ -105,11 +166,12 @@ export function EvidenceCanvas() {
           alpha: true,
           powerPreference: "high-performance",
         }}
-        onCreated={() =>
+        onCreated={({ gl }) => {
+          canvasElement.current = gl.domElement;
           window.requestAnimationFrame(() =>
             window.dispatchEvent(new CustomEvent("verity:webgl-ready")),
-          )
-        }
+          );
+        }}
       >
         <ambientLight intensity={1.8} />
         <directionalLight position={[3, 3, 4]} intensity={3} />
@@ -117,4 +179,8 @@ export function EvidenceCanvas() {
       </Canvas>
     </div>
   );
+}
+
+function ScanFallbackLabel({ label }: { label: string }) {
+  return <span className="canvas-fallback__label">{label}</span>;
 }
