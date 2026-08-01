@@ -132,10 +132,10 @@ export function VerityHome() {
             yPercent: 0,
             rotate: rotations[index],
             scale: 1,
-            duration: 0.76,
-            ease: "power2.out",
+            duration: 1.05,
+            ease: "power2.inOut",
           },
-          index === 0 ? "-=0.18" : ">-0.08",
+          index === 0 ? "-=0.08" : ">",
         );
       });
 
