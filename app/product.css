@@ -2086,6 +2086,37 @@ input:focus-visible {
   display: block;
   min-height: 0.88em;
 }
+.signal-title-char {
+  position: relative;
+  display: inline-block;
+}
+.signal-title-char > span {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+.signal-story__initial {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-size: clamp(50px, 7vw, 105px);
+  font-weight: 480;
+  line-height: 0.9;
+  letter-spacing: -0.065em;
+  color: rgba(255, 255, 255, 0.2);
+  pointer-events: none;
+}
+.signal-story__initial span:first-child {
+  transform: translateX(-7%);
+}
+.signal-story__initial span:last-child {
+  transform: translateX(8%);
+}
 .signal-deck {
   position: absolute;
   z-index: 5;

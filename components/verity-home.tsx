@@ -6,9 +6,8 @@ import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
 
-gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, useGSAP);
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const signals = [
   {
@@ -37,6 +36,24 @@ const signals = [
   },
 ];
 
+function CharacterLine({ text, line }: { text: string; line: number }) {
+  return (
+    <span className="signal-title-line" aria-label={text}>
+      {Array.from(text).map((character, index) => (
+        <span
+          className="signal-title-char"
+          aria-hidden="true"
+          key={`${character}-${index}`}
+        >
+          <span data-title-char data-index={index} data-line={line}>
+            {character === " " ? "\u00a0" : character}
+          </span>
+        </span>
+      ))}
+    </span>
+  );
+}
+
 export function VerityHome() {
   const root = useRef<HTMLElement>(null);
 
@@ -51,6 +68,7 @@ export function VerityHome() {
       }
 
       const cards = gsap.utils.toArray<HTMLElement>("[data-signal-card]");
+      const characters = gsap.utils.toArray<HTMLElement>("[data-title-char]");
       const compact = window.innerWidth < 800;
       const rotations = compact ? [-7, -2, 2, 7] : [-8, -3, 3, 8];
       const xPositions = compact ? [-120, -40, 40, 120] : [-285, -95, 95, 285];
@@ -63,28 +81,35 @@ export function VerityHome() {
         },
       });
 
+      gsap.set(characters, {
+        x: (index, element) => {
+          const line = Number((element as HTMLElement).dataset.line ?? 0);
+          return (((index * 47 + line * 31) % 181) - 90) * 3.4;
+        },
+        y: (index, element) => {
+          const line = Number((element as HTMLElement).dataset.line ?? 0);
+          return (((index * 83 + line * 19) % 151) - 75) * 2.2;
+        },
+        rotate: (index) => ((index * 37) % 110) - 55,
+        scale: 0.8,
+        opacity: (index) => (index % 4 === 0 || index % 7 === 0 ? 0.78 : 0),
+      });
+
       timeline
-        .to("[data-title-line='one']", {
-          duration: 1.35,
-          scrambleText: {
-            text: "Four signals today.",
-            chars: "VERITY0123456789—+",
-            speed: 0.38,
-          },
-          ease: "none",
-        })
+        .to("[data-initial-message]", { opacity: 0, duration: 0.3 })
         .to(
-          "[data-title-line='two']",
+          characters,
           {
-            duration: 1.35,
-            scrambleText: {
-              text: "One clearer story.",
-              chars: "VERITY0123456789—+",
-              speed: 0.38,
-            },
-            ease: "none",
+            x: 0,
+            y: 0,
+            rotate: 0,
+            scale: 1,
+            opacity: 1,
+            duration: 1.3,
+            stagger: { each: 0.028, from: "random" },
+            ease: "power3.out",
           },
-          "<",
+          "<0.05",
         )
         .to({}, { duration: 0.55 })
         .to("[data-story-title]", {
@@ -160,12 +185,16 @@ export function VerityHome() {
             <span>SCROLL TO RESOLVE</span>
           </div>
           <div className="signal-story__copy">
+            <p className="signal-story__initial" data-initial-message>
+              <span>4 checks ready.</span>
+              <span>1 story waiting.</span>
+            </p>
             <h1
               data-story-title
               aria-label="Four signals today. One clearer story."
             >
-              <span data-title-line="one">4 sgnls tdy.</span>
-              <span data-title-line="two">1 clr stry.</span>
+              <CharacterLine text="Four signals today." line={0} />
+              <CharacterLine text="One clearer story." line={1} />
             </h1>
           </div>
           <div className="signal-deck" aria-label="Four verification signals">
