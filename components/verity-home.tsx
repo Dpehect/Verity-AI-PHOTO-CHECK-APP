@@ -36,7 +36,15 @@ const signals = [
   },
 ];
 
-function CharacterLine({ text, line }: { text: string; line: number }) {
+function CharacterLine({
+  text,
+  line,
+  group = "hero",
+}: {
+  text: string;
+  line: number;
+  group?: "hero" | "trust";
+}) {
   return (
     <span className="signal-title-line" aria-label={text}>
       {Array.from(text).map((character, index) => (
@@ -45,7 +53,11 @@ function CharacterLine({ text, line }: { text: string; line: number }) {
           aria-hidden="true"
           key={`${character}-${index}`}
         >
-          <span data-title-char data-index={index} data-line={line}>
+          <span
+            data-character-group={group}
+            data-index={index}
+            data-line={line}
+          >
             {character === " " ? "\u00a0" : character}
           </span>
         </span>
@@ -68,7 +80,9 @@ export function VerityHome() {
       }
 
       const cards = gsap.utils.toArray<HTMLElement>("[data-signal-card]");
-      const characters = gsap.utils.toArray<HTMLElement>("[data-title-char]");
+      const characters = gsap.utils.toArray<HTMLElement>(
+        "[data-character-group='hero']",
+      );
       const rotations = [0, 6.2, 12.4, 18.6];
       const timeline = gsap.timeline({
         scrollTrigger: {
@@ -142,6 +156,50 @@ export function VerityHome() {
       timeline
         .to({}, { duration: 0.6 })
         .to("[data-next-note]", { opacity: 1, y: 0, duration: 0.35 }, "-=0.2");
+
+      const trustCharacters = gsap.utils.toArray<HTMLElement>(
+        "[data-character-group='trust']",
+      );
+      gsap.set(trustCharacters, {
+        x: (index) => (((index * 61) % 241) - 120) * 4.2,
+        y: (index) => (((index * 97) % 181) - 90) * 3.2,
+        rotate: (index) => ((index * 43) % 130) - 65,
+        scale: (index) => 0.72 + (index % 4) * 0.1,
+        opacity: (index) => (index % 3 === 0 ? 1 : 0.12),
+      });
+
+      const trustTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: "[data-trust-story]",
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 1.2,
+        },
+      });
+      trustTimeline
+        .to(trustCharacters, {
+          x: 0,
+          y: 0,
+          rotate: 0,
+          scale: 1,
+          opacity: 1,
+          duration: 1.8,
+          stagger: { each: 0.035, from: "random" },
+          ease: "power3.out",
+        })
+        .to({}, { duration: 0.6 })
+        .to("[data-trust-question]", {
+          xPercent: -135,
+          scale: 1.16,
+          duration: 1.65,
+          ease: "power2.inOut",
+        })
+        .fromTo(
+          "[data-trust-cta]",
+          { opacity: 0, y: 100 },
+          { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" },
+          "-=0.42",
+        );
     },
     { scope: root },
   );
@@ -226,6 +284,37 @@ export function VerityHome() {
           <p className="signal-story__next" data-next-note>
             Continue to verify a file
           </p>
+        </div>
+      </section>
+
+      <section className="trust-story" data-trust-story>
+        <div className="trust-story__stage">
+          <div className="trust-story__question" data-trust-question>
+            <h2 aria-label="So, can you trust this file?">
+              <CharacterLine
+                text="So, can you trust this file?"
+                line={0}
+                group="trust"
+              />
+            </h2>
+          </div>
+          <div className="trust-story__cta" data-trust-cta>
+            <p>
+              <i /> VERIFY WHAT YOU SEE
+            </p>
+            <h3>
+              Read the full
+              <span>evidence record</span>
+            </h3>
+            <Link href="/verify">
+              Start a verification <ArrowUpRight size={16} />
+            </Link>
+          </div>
+          <div className="trust-story__counter">
+            <span>ON SCREEN</span>
+            <i />
+            <b>002</b>
+          </div>
         </div>
       </section>
     </main>
