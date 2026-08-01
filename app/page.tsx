@@ -1,5 +1,5 @@
-import { VerityExperience } from "@/components/verity-experience";
+import { VerityHome } from "@/components/verity-home";
 
 export default function Home() {
-  return <VerityExperience />;
+  return <VerityHome />;
 }
