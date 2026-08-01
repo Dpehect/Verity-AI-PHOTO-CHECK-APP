@@ -84,12 +84,12 @@ export function VerityHome() {
         "[data-character-group='hero']",
       );
       const rotations = [0, 6.2, 12.4, 18.6];
-      const timeline = gsap.timeline({
+      const copyTimeline = gsap.timeline({
         scrollTrigger: {
-          trigger: "[data-story]",
+          trigger: "[data-copy-story]",
           start: "top top",
           end: "bottom bottom",
-          scrub: 1.35,
+          scrub: 1.1,
         },
       });
 
@@ -107,7 +107,7 @@ export function VerityHome() {
         opacity: (index) => (index % 4 === 0 || index % 7 === 0 ? 0.78 : 0),
       });
 
-      timeline
+      copyTimeline
         .to("[data-initial-message]", { opacity: 0, duration: 0.3 })
         .to(
           characters,
@@ -125,15 +125,24 @@ export function VerityHome() {
         )
         .to({}, { duration: 0.55 })
         .to("[data-story-title]", {
-          scale: 0.68,
-          yPercent: -86,
+          scale: 1.12,
+          xPercent: -125,
           opacity: 0,
-          duration: 0.9,
+          duration: 1.1,
           ease: "power3.inOut",
         });
 
+      const cardTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: "[data-story]",
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 1.35,
+        },
+      });
+
       cards.forEach((card, index) => {
-        timeline.fromTo(
+        cardTimeline.fromTo(
           card,
           {
             opacity: 1,
@@ -153,7 +162,7 @@ export function VerityHome() {
         );
       });
 
-      timeline
+      cardTimeline
         .to({}, { duration: 0.6 })
         .to("[data-next-note]", { opacity: 1, y: 0, duration: 0.35 }, "-=0.2");
 
@@ -231,7 +240,7 @@ export function VerityHome() {
         </Link>
       </header>
 
-      <section id="method" className="signal-story" data-story>
+      <section id="method" className="signal-copy-story" data-copy-story>
         <div className="signal-story__stage">
           <div className="signal-story__meta">
             <span>DIGITAL PROVENANCE / 2026</span>
@@ -249,6 +258,20 @@ export function VerityHome() {
               <CharacterLine text="Four signals today." line={0} />
               <CharacterLine text="One clearer story." line={1} />
             </h1>
+          </div>
+          <div className="signal-story__counter">
+            <span>ON SCREEN</span>
+            <i />
+            <b>001</b>
+          </div>
+        </div>
+      </section>
+
+      <section className="signal-story" data-story>
+        <div className="signal-story__stage">
+          <div className="signal-story__meta">
+            <span>FOUR VERIFICATION SIGNALS</span>
+            <span>SCROLL TO REVEAL</span>
           </div>
           <div
             className="signal-deck signal-circles"
@@ -279,7 +302,7 @@ export function VerityHome() {
           <div className="signal-story__counter">
             <span>ON SCREEN</span>
             <i />
-            <b>001</b>
+            <b>002</b>
           </div>
           <p className="signal-story__next" data-next-note>
             Continue to verify a file
@@ -291,9 +314,10 @@ export function VerityHome() {
         <div className="trust-story__stage">
           <div className="trust-story__question" data-trust-question>
             <h2 aria-label="So, can you trust this file?">
+              <CharacterLine text="So," line={0} group="trust" />
               <CharacterLine
-                text="So, can you trust this file?"
-                line={0}
+                text="can you trust this file?"
+                line={1}
                 group="trust"
               />
             </h2>
@@ -313,7 +337,7 @@ export function VerityHome() {
           <div className="trust-story__counter">
             <span>ON SCREEN</span>
             <i />
-            <b>002</b>
+            <b>003</b>
           </div>
         </div>
       </section>

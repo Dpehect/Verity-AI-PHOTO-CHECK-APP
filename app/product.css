@@ -2033,6 +2033,11 @@ input:focus-visible {
   font: 700 10px var(--font-mono);
 }
 
+.signal-copy-story {
+  height: 330vh;
+  position: relative;
+  background: #090a0b;
+}
 .signal-story {
   height: 720vh;
   position: relative;
@@ -2348,6 +2353,11 @@ input:focus-visible {
   line-height: 0.83;
   letter-spacing: -0.075em;
   white-space: nowrap;
+  text-align: center;
+}
+.trust-story__question h2 > .signal-title-line {
+  display: block;
+  min-height: 0.83em;
 }
 .trust-story__cta {
   position: absolute;
@@ -2424,6 +2434,9 @@ input:focus-visible {
 }
 
 @media (max-width: 800px) {
+  .signal-copy-story {
+    height: 280vh;
+  }
   .trust-story {
     height: 360vh;
   }
@@ -2444,6 +2457,9 @@ input:focus-visible {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .signal-copy-story {
+    height: 100vh;
+  }
   .trust-story {
     height: 100vh;
   }
