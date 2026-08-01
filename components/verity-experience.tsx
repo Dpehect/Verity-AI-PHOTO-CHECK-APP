@@ -291,7 +291,7 @@ export function VerityExperience() {
         <div className="shell">
           <div className="section-heading section-heading--light" data-reveal>
             <p className="kicker">02 / Inspect the evidence</p>
-            <h2>
+            <h2 data-split>
               Don&apos;t take our word for it.
               <br />
               <em>Look closer.</em>
@@ -428,6 +428,40 @@ export function VerityExperience() {
             <Sparkles size={14} /> No upload needed — choose a sample to explore
             a real verification flow.
           </p>
+        </div>
+      </section>
+
+      <section
+        className="evidence-collection section"
+        aria-label="Evidence collection"
+      >
+        <div className="shell evidence-collection__heading">
+          <p className="kicker">03 / Drag to examine</p>
+          <h2 data-split>Every file leaves a different trace.</h2>
+          <p>
+            Drag the collection horizontally. Each record represents a different
+            point in a media provenance chain.
+          </p>
+        </div>
+        <div className="evidence-collection__viewport">
+          <div className="evidence-collection__track" data-drag-track>
+            {samples.concat(samples).map((item, index) => (
+              <article
+                className={`evidence-card ${item.color}`}
+                key={`${item.name}-${index}`}
+              >
+                <span>0{index + 1} / RECORD</span>
+                <div className="evidence-card__visual">
+                  <i />
+                  <b>TRACE {item.confidence || "—"}</b>
+                </div>
+                <h3>{item.name}</h3>
+                <p>
+                  {item.status} · {item.type}
+                </p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 

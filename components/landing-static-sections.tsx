@@ -43,7 +43,7 @@ export function ManifestSection() {
     <section id="how" className="manifest section shell">
       <div className="section-heading" data-reveal>
         <p className="kicker">01 / Provenance, made visible</p>
-        <h2>
+        <h2 data-split>
           A file is not a moment.
           <br />
           <em>It is a chain of events.</em>
@@ -55,7 +55,7 @@ export function ManifestSection() {
       </div>
       <div className="trace">
         <div className="trace__visual" data-reveal>
-          <div className="trace__frame">
+          <div className="trace__frame" data-parallax>
             <div className="trace__scene">
               <div className="trace__sun" />
               <div className="trace__hill trace__hill--one" />
@@ -100,7 +100,7 @@ export function WorkspacePreview() {
     <section id="workspace" className="workspace section shell">
       <div className="workspace__copy" data-reveal>
         <p className="kicker">03 / Built for verification teams</p>
-        <h2>
+        <h2 data-split>
           From one file
           <br />
           to every file.
@@ -194,7 +194,7 @@ export function ClosingSection() {
       </div>
       <div className="closing__copy shell" data-reveal>
         <p className="kicker">The next layer of digital trust</p>
-        <h2>
+        <h2 data-split>
           Don&apos;t guess
           <br />
           what happened.
