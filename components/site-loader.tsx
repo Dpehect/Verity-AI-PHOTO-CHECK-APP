@@ -1,11 +1,10 @@
 "use client";
 
-import { ScanLine } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function SiteLoader() {
   const [progress, setProgress] = useState(0);
-  const [label, setLabel] = useState("Preparing interface");
+  const [label, setLabel] = useState("Reading the record");
   const [done, setDone] = useState(false);
   useEffect(() => {
     if (sessionStorage.getItem("verity-intro-seen")) {
@@ -17,30 +16,18 @@ export function SiteLoader() {
     }
     let active = true;
     const ready = async () => {
-      const webglReady = new Promise<"webgl">((resolve) =>
-        window.addEventListener("verity:webgl-ready", () => resolve("webgl"), {
-          once: true,
-        }),
-      );
       await document.fonts.ready;
       if (!active) return;
       setProgress(35);
-      setLabel("Typography ready");
-      const fallbackReady = new Promise<"fallback">((resolve) =>
-        window.setTimeout(() => resolve("fallback"), 2400),
-      );
-      const renderer = await Promise.race([webglReady, fallbackReady]);
+      setLabel("Indexing provenance");
+      await new Promise((resolve) => window.setTimeout(resolve, 260));
       if (!active) return;
       setProgress(82);
-      setLabel(
-        renderer === "webgl"
-          ? "Evidence renderer ready"
-          : "Accessible renderer ready",
-      );
+      setLabel("Assembling the evidence");
       await new Promise((resolve) => window.requestAnimationFrame(resolve));
       setProgress(100);
       setLabel("Ready to inspect");
-      await new Promise((resolve) => window.setTimeout(resolve, 180));
+      await new Promise((resolve) => window.setTimeout(resolve, 320));
       sessionStorage.setItem("verity-intro-seen", "1");
       setDone(true);
     };
@@ -55,16 +42,24 @@ export function SiteLoader() {
       aria-hidden={done}
       aria-label="Loading Verity"
     >
+      <div className="preloader__panel preloader__panel--left" />
+      <div className="preloader__panel preloader__panel--right" />
       <div className="preloader__top">
-        <span>VERITY / SYSTEM 01</span>
-        <span>CONTENT PROVENANCE</span>
+        <span>VERITY® / 2026</span>
+        <span>PROVENANCE OFFICE</span>
       </div>
       <div className="preloader__center">
-        <div className="preloader__mark">
-          <ScanLine size={22} />
-          <span>V</span>
-        </div>
         <p>{label}</p>
+        <div className="preloader__word" aria-hidden="true">
+          {"VERITY".split("").map((letter, index) => (
+            <span key={index}>{letter}</span>
+          ))}
+        </div>
+        <div className="preloader__index">
+          <span>IMAGE</span>
+          <span>ORIGIN</span>
+          <span>EVIDENCE</span>
+        </div>
       </div>
       <div className="preloader__progress">
         <span>

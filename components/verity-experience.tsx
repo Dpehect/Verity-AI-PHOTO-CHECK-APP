@@ -1,8 +1,7 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -21,19 +20,12 @@ import {
   X,
 } from "lucide-react";
 import { SiteLoader } from "@/components/site-loader";
+import { EvidenceArtwork } from "@/components/evidence-artwork";
 import {
   ClosingSection,
   ManifestSection,
   WorkspacePreview,
 } from "@/components/landing-static-sections";
-
-const EvidenceCanvas = dynamic(
-  () =>
-    import("@/components/evidence-canvas").then(
-      (module) => module.EvidenceCanvas,
-    ),
-  { ssr: false },
-);
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -120,8 +112,8 @@ export function VerityExperience() {
             delay: 1.75,
           });
 
-          gsap.to("[data-orbit]", {
-            rotate: 18,
+          gsap.to("[data-scan-frame]", {
+            yPercent: -8,
             scrollTrigger: {
               trigger: "[data-hero]",
               start: "top top",
@@ -131,8 +123,7 @@ export function VerityExperience() {
           });
 
           gsap.to("[data-artifact]", {
-            yPercent: 20,
-            rotateX: -4,
+            yPercent: 14,
             scrollTrigger: {
               trigger: "[data-hero]",
               start: "top top",
@@ -250,26 +241,12 @@ export function VerityExperience() {
           </div>
         </div>
 
-        <div className="forensic-lens">
-          <span>TRACE</span>
+        <div className="forensic-lens" aria-hidden="true">
+          <span>AUTHENTICITY / ORIGIN / EDITS</span>
         </div>
 
         <div className="artifact-wrap" data-artifact>
-          <div className="artifact-orbit" data-orbit>
-            <span />
-            <span />
-            <span />
-          </div>
-          <Suspense
-            fallback={
-              <div className="canvas-fallback">
-                <ScanLine />
-                <span>Preparing evidence object</span>
-              </div>
-            }
-          >
-            <EvidenceCanvas />
-          </Suspense>
+          <EvidenceArtwork />
           <div className="artifact__top artifact__top--canvas">
             <span>ASSET / 8F42—A91C</span>
             <span>2048 × 1365</span>
