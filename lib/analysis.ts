@@ -17,7 +17,9 @@ export type AssetAnalysis = {
 };
 
 const hex = (buffer: ArrayBuffer) =>
-  Array.from(new Uint8Array(buffer)).map((value) => value.toString(16).padStart(2, "0")).join("");
+  Array.from(new Uint8Array(buffer))
+    .map((value) => value.toString(16).padStart(2, "0"))
+    .join("");
 
 const imageDimensions = (file: File) =>
   new Promise<{ width?: number; height?: number }>((resolve) => {
@@ -35,7 +37,10 @@ const imageDimensions = (file: File) =>
     image.src = url;
   });
 
-export async function inspectFile(file: File, onProgress: (progress: number, label: string) => void) {
+export async function inspectFile(
+  file: File,
+  onProgress: (progress: number, label: string) => void,
+) {
   const stages = [
     [12, "Reading asset bytes"],
     [34, "Calculating fingerprint"],
@@ -82,7 +87,8 @@ export const demoAssets: AssetAnalysis[] = [
     size: 18_400_000,
     width: 4096,
     height: 2731,
-    fingerprint: "8f42a91c7460d3b8c654efe63a78ae94c37d0ce29b7a287ff91b6937771484c2",
+    fingerprint:
+      "8f42a91c7460d3b8c654efe63a78ae94c37d0ce29b7a287ff91b6937771484c2",
     createdAt: "2026-07-31T06:42:00.000Z",
     state: "verified",
     score: 100,
@@ -97,7 +103,8 @@ export const demoAssets: AssetAnalysis[] = [
     size: 8_200_000,
     width: 2400,
     height: 1600,
-    fingerprint: "31af07eaee0e96d657a666a182d89cad0b003cf30c542dbf5fb753b1f0fbcc2d",
+    fingerprint:
+      "31af07eaee0e96d657a666a182d89cad0b003cf30c542dbf5fb753b1f0fbcc2d",
     createdAt: "2026-07-30T11:18:00.000Z",
     state: "edited",
     score: 86,
@@ -112,19 +119,32 @@ export const demoAssets: AssetAnalysis[] = [
     size: 2_700_000,
     width: 1600,
     height: 1067,
-    fingerprint: "d19fb31200c27d62176749de297e524cc753652ad203972b817f392bc58922c1",
+    fingerprint:
+      "d19fb31200c27d62176749de297e524cc753652ad203972b817f392bc58922c1",
     createdAt: "2026-07-29T16:24:00.000Z",
     state: "missing",
     score: 0,
     signer: null,
     ingredients: 0,
-    warnings: ["No Content Credential was found. This is not evidence that the asset is false."],
+    warnings: [
+      "No Content Credential was found. This is not evidence that the asset is false.",
+    ],
   },
 ];
 
 export const formatBytes = (bytes: number) => {
   if (!bytes) return "0 B";
   const units = ["B", "KB", "MB", "GB"];
-  const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+  const index = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    units.length - 1,
+  );
   return `${(bytes / 1024 ** index).toFixed(index > 1 ? 1 : 0)} ${units[index]}`;
+};
+
+export const validateImage = (file: Pick<File, "type" | "size">) => {
+  if (!file.type.startsWith("image/")) return "Choose a supported image file";
+  if (file.size > 25 * 1024 * 1024)
+    return "File exceeds the 25 MB browser demo limit";
+  return null;
 };

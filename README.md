@@ -40,10 +40,13 @@ Install dependencies and start the development server:
 
 ```bash
 npm install
+cp .env.example .env.local
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+Set `NEXT_PUBLIC_SITE_URL` to the final public domain in production so canonical metadata, robots, and sitemap URLs use the deployed origin.
 
 Create a production build:
 

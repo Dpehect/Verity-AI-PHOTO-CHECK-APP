@@ -6,11 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run",
+    "check": "npm run lint && npm run test && npm run build",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
-    "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.7.0",
     "gsap": "^3.13.0",
     "lucide-react": "^0.468.0",
@@ -24,8 +26,11 @@
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.3",
     "@types/react-dom": "^19.0.2",
+    "@types/three": "^0.185.3",
     "eslint": "^9.17.0",
     "eslint-config-next": "^16.1.0",
-    "typescript": "^5.7.2"
+    "prettier": "^3.9.6",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.10"
   }
 }
