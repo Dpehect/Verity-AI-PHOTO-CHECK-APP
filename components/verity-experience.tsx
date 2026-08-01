@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -20,6 +22,9 @@ import {
   Upload,
   X,
 } from "lucide-react";
+import { SiteLoader } from "@/components/site-loader";
+
+const EvidenceCanvas = dynamic(() => import("@/components/evidence-canvas").then((module) => module.EvidenceCanvas), { ssr: false });
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -35,6 +40,8 @@ const samples = [
   { name: "Campaign export", type: "PNG · 8.2 MB", status: "Valid with edits", confidence: 86, color: "sample-orange" },
   { name: "Social repost", type: "WEBP · 2.7 MB", status: "No credential", confidence: 0, color: "sample-dark" },
 ];
+
+const demoReportId = (index: number) => ["northstar-editorial", "campaign-export", "social-repost"][index];
 
 function usePointerGlow(ref: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
@@ -53,15 +60,10 @@ function usePointerGlow(ref: React.RefObject<HTMLElement | null>) {
 export function VerityExperience() {
   const root = useRef<HTMLElement>(null);
   const hero = useRef<HTMLDivElement>(null);
-  const [loaded, setLoaded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSample, setActiveSample] = useState(0);
+  const [activeTool, setActiveTool] = useState<"inspect" | "layers" | "timeline">("inspect");
   usePointerGlow(hero);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setLoaded(true), 1700);
-    return () => window.clearTimeout(timer);
-  }, []);
 
   useGSAP(
     () => {
@@ -118,21 +120,14 @@ export function VerityExperience() {
 
   return (
     <main ref={root}>
-      <div className={`preloader ${loaded ? "preloader--done" : ""}`} aria-hidden={loaded}>
-        <div className="preloader__top"><span>VERITY / SYSTEM 01</span><span>CONTENT PROVENANCE</span></div>
-        <div className="preloader__center">
-          <div className="preloader__mark"><ScanLine size={22} /><span>V</span></div>
-          <p>Tracing digital evidence</p>
-        </div>
-        <div className="preloader__progress"><span /><b>100%</b></div>
-      </div>
+      <SiteLoader />
 
       <header className="nav shell">
         <a className="brand" href="#top" aria-label="Verity home"><span className="brand__mark">V</span><span>VERITY</span></a>
         <nav className="nav__links" aria-label="Main navigation">
           <a href="#how">How it works</a><a href="#verify">Verify</a><a href="#workspace">For teams</a>
         </nav>
-        <a className="nav__cta" href="#verify">Verify an asset <ArrowUpRight size={15} /></a>
+        <Link className="nav__cta" href="/verify">Verify an asset <ArrowUpRight size={15} /></Link>
         <button className="nav__menu" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
           {menuOpen ? <X /> : <Menu />}
         </button>
@@ -152,15 +147,9 @@ export function VerityExperience() {
 
         <div className="artifact-wrap" data-artifact>
           <div className="artifact-orbit" data-orbit><span /><span /><span /></div>
-          <div className="artifact">
-            <div className="artifact__image">
-              <div className="mountain mountain--far" /><div className="mountain mountain--near" />
-              <div className="artifact__sun" /><div className="artifact__scan" />
-            </div>
-            <div className="artifact__top"><span>ASSET / 8F42—A91C</span><span>2048 × 1365</span></div>
-            <div className="artifact__status"><ShieldCheck size={15} /><span><b>Credential verified</b>Signed by Northstar News</span></div>
-            <div className="artifact__tags"><span>JPEG</span><span>C2PA 2.2</span><span>3 INGREDIENTS</span></div>
-          </div>
+          <Suspense fallback={<div className="canvas-fallback"><ScanLine/><span>Preparing evidence object</span></div>}><EvidenceCanvas /></Suspense>
+          <div className="artifact__top artifact__top--canvas"><span>ASSET / 8F42—A91C</span><span>2048 × 1365</span></div>
+          <div className="artifact__status artifact__status--canvas"><ShieldCheck size={15} /><span><b>Credential verified</b>Signed by Northstar News</span></div>
           <div className="data-label data-label--left"><span>01</span><p>Capture device<br/><b>Leica SL3</b></p></div>
           <div className="data-label data-label--right"><span>02</span><p>Active manifest<br/><b>Signature valid</b></p></div>
         </div>
@@ -208,15 +197,16 @@ export function VerityExperience() {
                   <span><b>{item.name}</b><small>{item.type}</small></span><ChevronRight size={15}/>
                 </button>
               ))}
-              <button className="upload-button"><Upload size={16}/> Upload your own file</button>
+              <Link className="upload-button" href="/verify"><Upload size={16}/> Upload your own file</Link>
             </div>
 
             <div className="verify-console__viewer">
-              <div className={`viewer-media ${sample.color}`}>
+              <div className={`viewer-media ${sample.color} viewer-media--${activeTool}`}>
                 <div className="viewer-grid"/><div className="viewer-scan"/><div className="viewer-object"><div/><span/></div>
                 <div className="viewer-coordinates"><span>42.3601° N</span><span>71.0589° W</span></div>
+                {activeTool !== "inspect" && <div className="viewer-overlay"><span>{activeTool === "layers" ? "03 CREDENTIAL LAYERS" : "04 RECORDED EVENTS"}</span><b>{activeTool === "layers" ? "Source · Edit · Publish" : "Capture → Adjust → Sign → Verify"}</b></div>}
               </div>
-              <div className="viewer-tools"><button className="is-selected"><ScanLine size={14}/> Inspect</button><button><Layers3 size={14}/> Layers</button><button><Clock3 size={14}/> Timeline</button></div>
+              <div className="viewer-tools"><button className={activeTool === "inspect" ? "is-selected" : ""} aria-pressed={activeTool === "inspect"} onClick={() => setActiveTool("inspect")}><ScanLine size={14}/> Inspect</button><button className={activeTool === "layers" ? "is-selected" : ""} aria-pressed={activeTool === "layers"} onClick={() => setActiveTool("layers")}><Layers3 size={14}/> Layers</button><button className={activeTool === "timeline" ? "is-selected" : ""} aria-pressed={activeTool === "timeline"} onClick={() => setActiveTool("timeline")}><Clock3 size={14}/> Timeline</button></div>
             </div>
 
             <aside className="verify-console__result">
@@ -230,7 +220,7 @@ export function VerityExperience() {
                 <div><dt>Ingredients</dt><dd>{activeSample === 0 ? "3" : activeSample === 1 ? "5" : "—"}</dd></div>
                 <div><dt>Last update</dt><dd>{activeSample === 2 ? "—" : "24 min ago"}</dd></div>
               </dl>
-              <button className="report-button">Open full report <ArrowUpRight size={15}/></button>
+              <Link className="report-button" href={`/report/${demoReportId(activeSample)}`}>Open full report <ArrowUpRight size={15}/></Link>
             </aside>
           </div>
           <p className="verify-note"><Sparkles size={14}/> No upload needed — choose a sample to explore a real verification flow.</p>
@@ -242,12 +232,12 @@ export function VerityExperience() {
           <p className="kicker">03 / Built for verification teams</p>
           <h2>From one file<br/>to every file.</h2>
           <p>Review high-volume media, preserve an auditable record, and integrate provenance checks into the tools your team already uses.</p>
-          <a href="#top">Explore the workspace <ArrowUpRight size={16}/></a>
+          <Link href="/workspace">Explore the workspace <ArrowUpRight size={16}/></Link>
         </div>
         <div className="workspace__ui" data-reveal>
           <div className="workspace__nav"><span className="brand__mark">V</span><div><i/><i/><i/><i/></div><span>AD</span></div>
           <div className="workspace__body">
-            <div className="workspace__header"><div><small>WORKSPACE / NORTHSTAR</small><h3>Verification queue</h3></div><button><Upload size={14}/> New verification</button></div>
+            <div className="workspace__header"><div><small>WORKSPACE / NORTHSTAR</small><h3>Verification queue</h3></div><Link href="/verify"><Upload size={14}/> New verification</Link></div>
             <div className="workspace__stats"><div><small>VERIFIED ASSETS</small><b>1,284</b><span>+12.8%</span></div><div><small>REQUIRES REVIEW</small><b>24</b><span>6 urgent</span></div><div><small>AVG. PROCESSING</small><b>1.8s</b><span>Live</span></div></div>
             <div className="workspace__table">
               <div className="table-head"><span>ASSET</span><span>STATUS</span><span>SOURCE</span><span>UPDATED</span></div>
@@ -263,9 +253,9 @@ export function VerityExperience() {
         <div className="closing__copy shell" data-reveal>
           <p className="kicker">The next layer of digital trust</p>
           <h2>Don&apos;t guess<br/>what happened.<br/><em>Trace it.</em></h2>
-          <a href="#verify">Verify an asset <ArrowUpRight/></a>
+          <Link href="/verify">Verify an asset <ArrowUpRight/></Link>
         </div>
-        <footer className="shell"><div className="brand"><span className="brand__mark">V</span><span>VERITY</span></div><p>Content provenance infrastructure for a more transparent internet.</p><div><a href="#">Privacy</a><a href="#">C2PA</a><a href="#">GitHub</a></div><span>© 2026 VERITY</span></footer>
+        <footer className="shell"><div className="brand"><span className="brand__mark">V</span><span>VERITY</span></div><p>Content provenance infrastructure for a more transparent internet.</p><div><Link href="/verify">Verify</Link><a href="https://c2pa.org" target="_blank" rel="noreferrer">C2PA</a><a href="https://github.com/Dpehect/Verity-AI-PHOTO-CHECK-APP" target="_blank" rel="noreferrer">GitHub</a></div><span>© 2026 VERITY</span></footer>
       </section>
     </main>
   );
