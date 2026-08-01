@@ -93,22 +93,26 @@ export function VerityHome() {
           opacity: 0,
           duration: 0.9,
           ease: "power3.inOut",
-        })
-        .fromTo(
-          cards,
-          { opacity: 0, y: 560, x: 0, rotate: 0, scale: 0.78 },
+        });
+
+      cards.forEach((card, index) => {
+        timeline.fromTo(
+          card,
+          { opacity: 0, y: 560, x: 0, rotate: 0, scale: 0.8 },
           {
             opacity: 1,
             y: 35,
-            x: (index) => xPositions[index],
-            rotate: (index) => rotations[index],
+            x: xPositions[index],
+            rotate: rotations[index],
             scale: 1,
-            stagger: 0.24,
-            duration: 1.35,
-            ease: "power4.out",
+            duration: 0.82,
+            ease: "power3.out",
           },
-          "-=0.35",
-        )
+          index === 0 ? "-=0.28" : "-=0.12",
+        );
+      });
+
+      timeline
         .to({}, { duration: 0.35 })
         .to(cards, {
           y: -105,
