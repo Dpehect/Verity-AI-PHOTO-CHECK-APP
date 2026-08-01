@@ -75,7 +75,7 @@ export function VerityHome() {
           trigger: "[data-story]",
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.85,
+          scrub: 1.35,
         },
       });
 
