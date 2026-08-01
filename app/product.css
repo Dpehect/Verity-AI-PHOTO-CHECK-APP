@@ -2124,6 +2124,7 @@ input:focus-visible {
   height: 1px;
   left: 50%;
   top: 50%;
+  transform: rotate(-9.3deg);
 }
 .signal-card {
   position: absolute;
@@ -2138,7 +2139,8 @@ input:focus-visible {
   flex-direction: column;
   box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
   opacity: 0;
-  transform-origin: 50% 90%;
+  transform-origin: 50% 150%;
+  will-change: transform;
 }
 .signal-card--mint {
   background: #65d99a;

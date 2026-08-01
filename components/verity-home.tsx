@@ -69,9 +69,7 @@ export function VerityHome() {
 
       const cards = gsap.utils.toArray<HTMLElement>("[data-signal-card]");
       const characters = gsap.utils.toArray<HTMLElement>("[data-title-char]");
-      const compact = window.innerWidth < 800;
-      const rotations = compact ? [-7, -2, 2, 7] : [-8, -3, 3, 8];
-      const xPositions = compact ? [-120, -40, 40, 120] : [-285, -95, 95, 285];
+      const rotations = [0, 6.2, 12.4, 18.6];
       const timeline = gsap.timeline({
         scrollTrigger: {
           trigger: "[data-story]",
@@ -123,29 +121,26 @@ export function VerityHome() {
       cards.forEach((card, index) => {
         timeline.fromTo(
           card,
-          { opacity: 0, y: 560, x: 0, rotate: 0, scale: 0.8 },
           {
             opacity: 1,
-            y: 35,
-            x: xPositions[index],
+            yPercent: 135,
             rotate: rotations[index],
             scale: 1,
-            duration: 0.82,
-            ease: "power3.out",
           },
-          index === 0 ? "-=0.28" : "-=0.12",
+          {
+            opacity: 1,
+            yPercent: 0,
+            rotate: rotations[index],
+            scale: 1,
+            duration: 0.76,
+            ease: "power2.out",
+          },
+          index === 0 ? "-=0.18" : ">-0.08",
         );
       });
 
       timeline
-        .to({}, { duration: 0.35 })
-        .to(cards, {
-          y: -105,
-          x: (index) => xPositions[index] * 1.08,
-          rotate: (index) => rotations[index] * 0.82,
-          duration: 0.75,
-          ease: "power2.inOut",
-        })
+        .to({}, { duration: 0.6 })
         .to("[data-next-note]", { opacity: 1, y: 0, duration: 0.35 }, "-=0.2");
     },
     { scope: root },
@@ -197,11 +192,15 @@ export function VerityHome() {
               <CharacterLine text="One clearer story." line={1} />
             </h1>
           </div>
-          <div className="signal-deck" aria-label="Four verification signals">
+          <div
+            className="signal-deck signal-circles"
+            data-card-fan
+            aria-label="Four verification signals"
+          >
             {signals.map((signal) => (
               <article
                 key={signal.number}
-                className={`signal-card signal-card--${signal.tone}`}
+                className={`signal-card signal-circle signal-card--${signal.tone}`}
                 data-signal-card
               >
                 <div className="signal-card__top">
