@@ -51,8 +51,9 @@ export function VerityHome() {
       }
 
       const cards = gsap.utils.toArray<HTMLElement>("[data-signal-card]");
-      const rotations = [-9, -3, 4, 10];
-      const xPositions = [-180, -62, 62, 180];
+      const compact = window.innerWidth < 800;
+      const rotations = compact ? [-7, -2, 2, 7] : [-8, -3, 3, 8];
+      const xPositions = compact ? [-120, -40, 40, 120] : [-285, -95, 95, 285];
       const timeline = gsap.timeline({
         scrollTrigger: {
           trigger: "[data-story]",
@@ -63,41 +64,57 @@ export function VerityHome() {
       });
 
       timeline
-        .to("[data-story-title]", {
-          duration: 1.15,
+        .to("[data-title-line='one']", {
+          duration: 1.35,
           scrambleText: {
-            text: "Four signals today.\nOne clearer story.",
+            text: "Four signals today.",
             chars: "VERITY0123456789—+",
-            speed: 0.45,
+            speed: 0.38,
           },
           ease: "none",
         })
+        .to(
+          "[data-title-line='two']",
+          {
+            duration: 1.35,
+            scrambleText: {
+              text: "One clearer story.",
+              chars: "VERITY0123456789—+",
+              speed: 0.38,
+            },
+            ease: "none",
+          },
+          "<",
+        )
+        .to({}, { duration: 0.55 })
         .to("[data-story-title]", {
-          scale: 0.72,
-          yPercent: -78,
-          duration: 0.75,
+          scale: 0.68,
+          yPercent: -86,
+          opacity: 0,
+          duration: 0.9,
           ease: "power3.inOut",
         })
-        .to("[data-story-intro]", { opacity: 0, y: -20, duration: 0.25 }, "<")
         .fromTo(
           cards,
-          { opacity: 0, y: 520, x: 0, rotate: 0, scale: 0.72 },
+          { opacity: 0, y: 560, x: 0, rotate: 0, scale: 0.78 },
           {
             opacity: 1,
-            y: 40,
+            y: 35,
             x: (index) => xPositions[index],
             rotate: (index) => rotations[index],
             scale: 1,
-            stagger: 0.14,
-            duration: 1.15,
-            ease: "power3.out",
+            stagger: 0.24,
+            duration: 1.35,
+            ease: "power4.out",
           },
+          "-=0.35",
         )
+        .to({}, { duration: 0.35 })
         .to(cards, {
-          y: -90,
-          x: (index) => xPositions[index] * 1.28,
-          rotate: (index) => rotations[index] * 0.7,
-          duration: 0.8,
+          y: -105,
+          x: (index) => xPositions[index] * 1.08,
+          rotate: (index) => rotations[index] * 0.82,
+          duration: 0.75,
           ease: "power2.inOut",
         })
         .to("[data-next-note]", { opacity: 1, y: 0, duration: 0.35 }, "-=0.2");
@@ -139,11 +156,13 @@ export function VerityHome() {
             <span>SCROLL TO RESOLVE</span>
           </div>
           <div className="signal-story__copy">
-            <h1 data-story-title>4 sgnls tdy.\n1 clr stry.</h1>
-            <p data-story-intro>
-              Four independent checks turn a file into evidence you can actually
-              read.
-            </p>
+            <h1
+              data-story-title
+              aria-label="Four signals today. One clearer story."
+            >
+              <span data-title-line="one">4 sgnls tdy.</span>
+              <span data-title-line="two">1 clr stry.</span>
+            </h1>
           </div>
           <div className="signal-deck" aria-label="Four verification signals">
             {signals.map((signal) => (

@@ -2032,7 +2032,7 @@ input:focus-visible {
 }
 
 .signal-story {
-  height: 470vh;
+  height: 390vh;
   position: relative;
 }
 .signal-story__stage {
@@ -2075,7 +2075,6 @@ input:focus-visible {
   text-align: center;
 }
 .signal-story__copy h1 {
-  white-space: pre-line;
   font-size: clamp(64px, 9vw, 138px);
   font-weight: 480;
   line-height: 0.86;
@@ -2083,12 +2082,9 @@ input:focus-visible {
   margin: 0;
   transform-origin: center;
 }
-.signal-story__copy p {
-  width: min(440px, 80vw);
-  margin: 36px auto 0;
-  color: rgba(255, 255, 255, 0.46);
-  font-size: 14px;
-  line-height: 1.55;
+.signal-story__copy h1 > span {
+  display: block;
+  min-height: 0.88em;
 }
 .signal-deck {
   position: absolute;
@@ -2100,11 +2096,11 @@ input:focus-visible {
 }
 .signal-card {
   position: absolute;
-  left: -165px;
-  top: -230px;
-  width: 330px;
-  height: 455px;
-  padding: 19px;
+  left: -195px;
+  top: -255px;
+  width: 390px;
+  height: 510px;
+  padding: 22px;
   color: #0a0b0c;
   border-radius: 19px;
   display: flex;
@@ -2134,7 +2130,7 @@ input:focus-visible {
 .signal-card h2 {
   display: flex;
   flex-direction: column;
-  font-size: 37px;
+  font-size: 43px;
   font-weight: 610;
   line-height: 0.87;
   letter-spacing: -0.065em;
@@ -2142,9 +2138,9 @@ input:focus-visible {
 }
 .signal-card > b {
   position: absolute;
-  right: 20px;
-  top: 122px;
-  font-size: 138px;
+  right: 22px;
+  top: 132px;
+  font-size: 158px;
   font-weight: 500;
   line-height: 1;
   opacity: 0.14;
@@ -2152,8 +2148,8 @@ input:focus-visible {
 }
 .signal-card > p {
   margin: auto 0 4px;
-  max-width: 270px;
-  font-size: 13px;
+  max-width: 315px;
+  font-size: 14px;
   line-height: 1.38;
 }
 .signal-card > i {
@@ -2254,9 +2250,6 @@ input:focus-visible {
   .new-home-verify {
     height: 39px;
     padding: 0 16px;
-  }
-  .signal-story__copy p {
-    font-size: 12px;
   }
   .signal-card {
     width: 210px;
